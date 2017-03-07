@@ -17,6 +17,8 @@ namespace TelegramBot
         {
         	Logger.Init(true, false);
 
+
+            //
             bot = new NyanBot("TOKEN");
             botHelper = new BotHelper("BaaakaBot");
 
