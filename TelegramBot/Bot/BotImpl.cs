@@ -1,23 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using Ninject;
 using TelegramBot.API;
 using TelegramBot.API.Models;
+using TelegramBot.Bot.Args;
+using TelegramBot.Bot.Commands;
+using TelegramBot.Bot.Replies;
+using TelegramBot.Bot.Updates;
 using TelegramBot.Logging;
-using TelegramBot.NyaBot.Args;
-using TelegramBot.NyaBot.Commands;
-using TelegramBot.NyaBot.Replies;
-using TelegramBot.NyaBot.Types;
-using TelegramBot.NyaBot.Updates;
 
-namespace TelegramBot.NyaBot
+namespace TelegramBot.Bot
 {
-    public class NyanBot
+    public class BotImpl
     {
         private readonly ApiClient _api;
         private readonly ICommandInvoker _invoker;
@@ -27,7 +21,7 @@ namespace TelegramBot.NyaBot
         [Inject]
         public ILogger Logger { get; set; }
 
-        public NyanBot(ApiClient api, ICommandInvoker invoker, IUpdatesProvider updatesProvider, IReplySender replySender)
+        public BotImpl(ApiClient api, ICommandInvoker invoker, IUpdatesProvider updatesProvider, IReplySender replySender)
         {
             _api = api;
             _invoker = invoker;
@@ -53,17 +47,25 @@ namespace TelegramBot.NyaBot
             Logger?.Log(LogLevel.Message, "Бот запущен.");
             while (IsRunning)
             {
-                var updates = await GetUpdates();
+                await Task.Delay(1000);
 
-                foreach (var update in updates)
-				{
-                    if (update.Message != null)
+                try
+                {
+                    var updates = await _updatesProvider.GetUpdates();
+
+                    foreach (var update in updates)
                     {
-                        await ProcessMessage(update.Message);
+                        if (update.Message != null)
+                        {
+                            await ProcessMessage(update.Message);
+                        }
                     }
                 }
-
-                await Task.Delay(1000);
+                catch (Exception ex)
+                {
+                    ProcessException(ex);
+                }
+              
             }
         }
 
@@ -84,23 +86,12 @@ namespace TelegramBot.NyaBot
                 await Task.Delay(300);
             }
         }
-
-        private Task<ICollection<Update>> GetUpdates()
+        
+        private void ProcessException(Exception ex)
         {
-            try
-            {
-                return _updatesProvider.GetUpdates();
-            }
-            catch (Exception ex)
-            {
-                IsRunning = false;
-                if (ex is WebException || ex is JsonException)
-                {
-                    Logger?.Log(LogLevel.Fatal, ex.Message);
-                    return Task.FromResult((ICollection<Update>)new Update[]{});
-                }
-                throw;
-            }
+            IsRunning = false;
+            Logger?.Log(LogLevel.Fatal, ex.Message);
         }
-	}
+
+    }
 }

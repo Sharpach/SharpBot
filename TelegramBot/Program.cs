@@ -2,15 +2,14 @@
 using System.Threading.Tasks;
 using Ninject;
 using TelegramBot.API.Models;
+using TelegramBot.Bot;
 using TelegramBot.IoC;
-using TelegramBot.NyaBot;
-using TelegramBot.NyaBot.Args;
 
 namespace TelegramBot
 {
     class Program
     {
-        static NyanBot _bot = null;
+        static BotImpl _bot = null;
         static BotHelper _botHelper = null;
         static Random _random = null;
         static DateTime _startTime;
@@ -24,7 +23,7 @@ namespace TelegramBot
 
         static void Main(string[] args)
         {
-            _bot = _kernel.Get<NyanBot>();
+            _bot = _kernel.Get<BotImpl>();
             _botHelper = new BotHelper("BaaakaBot");
 
             _random = new Random();

@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TelegramBot.API;
-using TelegramBot.NyaBot.Args;
-using TelegramBot.NyaBot.Replies;
-using TelegramBot.NyaBot.Types;
+using TelegramBot.Bot.Args;
+using TelegramBot.Bot.Replies;
+using TelegramBot.Bot.Types;
 
-namespace TelegramBot.NyaBot.Commands
+namespace TelegramBot.Bot.Commands
 {
     class SendMessageCommand : BaseCommand
     {
@@ -21,7 +21,7 @@ namespace TelegramBot.NyaBot.Commands
 
         public override bool ShouldInvoke(TelegramMessageEventArgs input)
         {
-            throw new NotImplementedException();
+            return false;
         }
 
         public override async Task<IEnumerable<IReply>> Invoke(TelegramMessageEventArgs input)

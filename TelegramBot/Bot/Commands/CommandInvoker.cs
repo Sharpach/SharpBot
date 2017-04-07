@@ -1,26 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Reflection;
 using System.Threading.Tasks;
+using Ninject;
 using TelegramBot.API;
-using TelegramBot.NyaBot.Args;
-using TelegramBot.NyaBot.Replies;
+using TelegramBot.Bot.Args;
+using TelegramBot.Bot.Replies;
 
-namespace TelegramBot.NyaBot.Commands
+namespace TelegramBot.Bot.Commands
 {
     class CommandInvoker : ICommandInvoker
     {
         private readonly ApiClient _client;
 
-        public CommandInvoker(ApiClient client)
+        public CommandInvoker(ApiClient client, IKernel kernel)
         {
             _client = client;
             Me = new MeCommand(_client);
-            Commands = new BaseCommand[] {Me, new TestCommand(), new CatCommand(), };
+            Commands = GetCommands(kernel).ToList();
         }
 
-        public IReadOnlyList<BaseCommand> Commands { get; } 
+        public ICollection<BaseCommand> Commands { get; } 
 
         public readonly MeCommand Me;
 
@@ -31,12 +32,20 @@ namespace TelegramBot.NyaBot.Commands
             {
                 if (!command.ShouldInvoke(input)) continue;
                 var output = await command.Invoke(input);
-                foreach (var item in output)
-                {
-                    result.Add(item);
-                }
+                result.AddRange(output);
             }
             return result;
+        }
+
+        private IEnumerable<BaseCommand> GetCommands(IKernel kernel)
+        {
+            var types = Assembly.GetExecutingAssembly()
+                .GetTypes()
+                .Where(t => typeof(BaseCommand).IsAssignableFrom(t) && !t.IsAbstract);
+            foreach (var commandType in types)
+            {
+                yield return (BaseCommand)kernel.Get(commandType);
+            }
         }
     }
 }

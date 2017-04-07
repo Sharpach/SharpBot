@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace TelegramBot.NyaBot.Types
+namespace TelegramBot.Bot.Types
 {
     public class UpdatesRequest
     {

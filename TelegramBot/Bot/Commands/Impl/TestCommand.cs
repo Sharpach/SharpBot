@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using TelegramBot.NyaBot.Args;
-using TelegramBot.NyaBot.Replies;
-using TelegramBot.Util;
+using TelegramBot.Bot.Args;
+using TelegramBot.Bot.Replies;
 
-namespace TelegramBot.NyaBot.Commands
+namespace TelegramBot.Bot.Commands
 {
     class TestCommand : BaseCommand
     {
@@ -21,8 +20,9 @@ namespace TelegramBot.NyaBot.Commands
 
         private IEnumerable<IReply> GetReplies(TelegramMessageEventArgs input)
         {
-            yield return new TextReply(input.Message.Text.Replace("ест", "хуест"));
-            yield return new ImageReply(File.ReadAllBytes(@"C:\Users\bashis\Desktop\photo_2017-02-08_14-48-48.jpg"));
+            yield return new ButtonsReply("Это кнопки", BotHelper.BuildKeyboard(BotHelper.BuildButtonsRow("ролл", "Вторая"), BotHelper.BuildButtonsRow("Третья")));
+            //yield return new TextReply(input.Message.Text.Replace("ест", "хуест"));
+            //yield return new ImageReply(File.ReadAllBytes(@"C:\Users\bashis\Desktop\photo_2017-02-08_14-48-48.jpg"));
         }
     }
 }

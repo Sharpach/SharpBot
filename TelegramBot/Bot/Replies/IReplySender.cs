@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace TelegramBot.NyaBot.Replies
+namespace TelegramBot.Bot.Replies
 {
     public interface IReplySender
     {

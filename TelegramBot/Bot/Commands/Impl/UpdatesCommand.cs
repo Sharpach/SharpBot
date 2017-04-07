@@ -1,4 +1,4 @@
-﻿namespace TelegramBot.NyaBot.Commands
+﻿namespace TelegramBot.Bot.Commands
 {
     class UpdatesCommand
     {

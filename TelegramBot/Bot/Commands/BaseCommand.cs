@@ -1,13 +1,12 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using TelegramBot.NyaBot.Args;
-using TelegramBot.NyaBot.Replies;
+using TelegramBot.Bot.Args;
+using TelegramBot.Bot.Replies;
+using TelegramBot.Util;
 
-namespace TelegramBot.NyaBot.Commands
+namespace TelegramBot.Bot.Commands
 {
     abstract class BaseCommand
     {
@@ -17,8 +16,13 @@ namespace TelegramBot.NyaBot.Commands
 
         protected bool StringEquals(string x, string y)
         {
-
             return x!= null && y != null && string.Equals(x.Trim(), y.Trim(), StringComparison.OrdinalIgnoreCase);
+        }
+
+        protected bool MessageEquals(TelegramMessageEventArgs args, params string[] values)
+        {
+            if (args?.Message?.Text == null) return false;
+            return StringOneOf(args?.Message?.Text, values);
         }
 
         protected bool StringOneOf(string x, IEnumerable<string> ys)
@@ -28,6 +32,10 @@ namespace TelegramBot.NyaBot.Commands
 
         protected IEnumerable<IReply> Nothing => Enumerable.Empty<IReply>();
 
+        protected static Task<IEnumerable<IReply>> FromResult(IReply reply)
+        {
+            return Task.FromResult(reply.Yield());
+        }
 
 
     }

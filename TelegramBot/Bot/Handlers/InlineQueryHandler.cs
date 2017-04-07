@@ -1,6 +1,6 @@
-﻿using TelegramBot.NyaBot.Args;
+﻿using TelegramBot.Bot.Args;
 
-namespace TelegramBot.NyaBot
+namespace TelegramBot.Bot
 {
     delegate void InlineQueryHandler(InlineQueryEventArgs a);
 }

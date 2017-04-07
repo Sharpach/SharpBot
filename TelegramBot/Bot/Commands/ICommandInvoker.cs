@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using TelegramBot.NyaBot.Args;
-using TelegramBot.NyaBot.Replies;
+using TelegramBot.Bot.Args;
+using TelegramBot.Bot.Replies;
 
-namespace TelegramBot.NyaBot.Commands
+namespace TelegramBot.Bot.Commands
 {
     public interface ICommandInvoker
     {

@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using TelegramBot.API;
-using TelegramBot.NyaBot.Types;
+using TelegramBot.Bot.Types;
 
-namespace TelegramBot.NyaBot.Replies
+namespace TelegramBot.Bot.Replies
 {
     class ReplySender : IReplyVisitor<long, Task>, IReplySender
     {
@@ -40,6 +35,19 @@ namespace TelegramBot.NyaBot.Replies
         {
             await _client.SendFile<object>("sendPhoto", chatId, reply.Image);
                 
+        }
+
+        public async Task VisitButtons(ButtonsReply reply, long chatId)
+        {
+            await _client.SendRequestAsync<object>("sendMessage", new MessageToSend
+            {
+                ChatId = chatId.ToString(),
+                Text = reply.Title,
+                DisableWebPagePreview = false,
+                DisableNotification = false,
+                ReplayToMessageId = 0,
+                ReplyMarkup = reply.Markup
+            });
         }
     }
 }

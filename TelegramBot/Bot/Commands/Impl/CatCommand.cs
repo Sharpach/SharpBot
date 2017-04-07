@@ -1,13 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using TelegramBot.NyaBot.Args;
-using TelegramBot.NyaBot.Replies;
+using Ninject;
+using TelegramBot.Bot.Args;
+using TelegramBot.Bot.Replies;
+using TelegramBot.Logging;
 
-namespace TelegramBot.NyaBot.Commands
+namespace TelegramBot.Bot.Commands
 {
     class CatCommand : BaseCommand
     {
+        [Inject]
+        public ILogger Logger { get; set; }
+
         public override bool ShouldInvoke(TelegramMessageEventArgs input)
         {
             return input?.Message?.Text?.ToUpper().Contains("КОТ") ?? false;
@@ -15,7 +21,17 @@ namespace TelegramBot.NyaBot.Commands
 
         public override async Task<IEnumerable<IReply>> Invoke(TelegramMessageEventArgs input)
         {
-            byte[] image = await GetRandomCatImage();
+            byte[] image;
+            try
+            {
+                image = await GetRandomCatImage();
+            }
+            catch (WebException ex)
+            {
+                Logger.Log(ex);
+                return Nothing;
+            }
+            
             await Task.Delay(500); //Limit Cat API requests per second
 
             return new IReply[]
@@ -25,7 +41,7 @@ namespace TelegramBot.NyaBot.Commands
             };
         }
 
-        private Task<byte[]> GetRandomCatImage()
+        private static Task<byte[]> GetRandomCatImage()
         {
             using (var client = new WebClient())
             {

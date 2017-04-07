@@ -2,7 +2,7 @@
 
 namespace TelegramBot.API.Models
 {
-    internal class KeyboardButton
+    public class KeyboardButton
     {
         //Text of the button. If none of the optional fields are used, it will be sent to the bot as a message when the button is pressed
         [JsonProperty("text")]

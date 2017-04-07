@@ -1,7 +1,7 @@
 ﻿using System;
 using TelegramBot.API.Models;
 
-namespace TelegramBot.NyaBot.Args
+namespace TelegramBot.Bot.Args
 {
     public class TelegramMessageEventArgs : EventArgs
     {

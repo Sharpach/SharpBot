@@ -1,4 +1,4 @@
-﻿namespace TelegramBot.NyaBot.Types
+﻿namespace TelegramBot.Bot.Types
 {
     enum ChatAction
     {

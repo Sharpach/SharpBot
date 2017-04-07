@@ -1,6 +1,6 @@
 ﻿using TelegramBot.API.Models.Inline_mode;
 
-namespace TelegramBot.NyaBot.Args
+namespace TelegramBot.Bot.Args
 {
     internal class InlineQueryEventArgs
     {

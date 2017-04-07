@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using TelegramBot.API;
 using TelegramBot.API.Models;
-using TelegramBot.NyaBot.Args;
-using TelegramBot.NyaBot.Replies;
+using TelegramBot.Bot.Args;
+using TelegramBot.Bot.Replies;
 using TelegramBot.Util;
 
-namespace TelegramBot.NyaBot.Commands
+namespace TelegramBot.Bot.Commands
 {
     class MeCommand : RequestCommand<User>
     {

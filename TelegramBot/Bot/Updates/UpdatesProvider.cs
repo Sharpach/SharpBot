@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using TelegramBot.API;
 using TelegramBot.API.Models;
-using TelegramBot.NyaBot.Args;
-using TelegramBot.NyaBot.Types;
+using TelegramBot.Bot.Types;
 
-namespace TelegramBot.NyaBot.Updates
+namespace TelegramBot.Bot.Updates
 {
     class UpdatesProvider : IUpdatesProvider
     {

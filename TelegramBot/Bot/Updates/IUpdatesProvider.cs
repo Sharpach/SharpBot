@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using TelegramBot.API.Models;
 
-namespace TelegramBot.NyaBot.Updates
+namespace TelegramBot.Bot.Updates
 {
     public interface IUpdatesProvider
     {
