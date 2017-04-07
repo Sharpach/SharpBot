@@ -90,6 +90,7 @@
     <Compile Include="API\Models\Video.cs" />
     <Compile Include="API\Models\Voice.cs" />
     <Compile Include="Bot\Commands\Impl\RollCommand.cs" />
+    <Compile Include="Bot\IBot.cs" />
     <Compile Include="Bot\Replies\ButtonsReply.cs" />
     <Compile Include="IlluminatiBot.cs" />
     <Compile Include="IoC\IoCBindings.cs" />

@@ -11,7 +11,7 @@ using TelegramBot.Logging;
 
 namespace TelegramBot.Bot
 {
-    public class BotImpl
+    public class BotImpl : IBot
     {
         private readonly ApiClient _api;
         private readonly ICommandInvoker _invoker;
@@ -29,13 +29,13 @@ namespace TelegramBot.Bot
             _replySender = replySender;
         }
 
-        internal async Task Start()
+        public async Task Start()
         {
             IsRunning = true;
             await UpdatesThread();
         }
 
-        internal void Stop()
+        public void Stop()
         {
             IsRunning = false;
         }

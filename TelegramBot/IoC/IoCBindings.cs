@@ -25,6 +25,7 @@ namespace TelegramBot.IoC
             Bind<IUpdatesProvider>().To<UpdatesProvider>();
             Bind<IReplySender>().To<ReplySender>();
             Bind<ILogger>().To<ConsoleLogger>();
+            Bind<IBot>().To<BotImpl>();
             //Bind<IKernel>().ToConstant(Kernel);
         }
     }
