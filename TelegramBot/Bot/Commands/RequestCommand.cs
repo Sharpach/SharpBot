@@ -15,7 +15,7 @@ namespace TelegramBot.Bot.Commands
 
         protected Task<T> Get(object obj = null)
         {
-            return _client.SendRequestAsync<T>(Method);
+            return _client.SendRequestAsync<T>(Method, obj);
         }
     }
 }
