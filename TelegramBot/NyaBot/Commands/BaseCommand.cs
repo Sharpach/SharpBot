@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using TelegramBot.NyaBot.Args;
+using TelegramBot.NyaBot.Replies;
 
 namespace TelegramBot.NyaBot.Commands
 {
@@ -12,7 +13,7 @@ namespace TelegramBot.NyaBot.Commands
     {
         public abstract bool ShouldInvoke(TelegramMessageEventArgs input);
 
-        public abstract Task<IEnumerable<string>> Invoke(TelegramMessageEventArgs input);
+        public abstract Task<IEnumerable<IReply>> Invoke(TelegramMessageEventArgs input);
 
         protected void SafeInvoke(Action action)
         {
@@ -38,7 +39,7 @@ namespace TelegramBot.NyaBot.Commands
             return ys.Any(y => StringEquals(x, y));
         }
 
-        protected IEnumerable<string> Nothing => Enumerable.Empty<string>();
+        protected IEnumerable<IReply> Nothing => Enumerable.Empty<IReply>();
 
 
 

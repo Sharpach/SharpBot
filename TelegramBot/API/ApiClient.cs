@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using RestSharp;
@@ -19,7 +20,7 @@ namespace TelegramBot.API
             _client = new RestClient(BaseApiAddress + token);
         }
         
-        public async Task<TResult> SendRequestAsync<TResult>(string method, object obj = null)
+        public Task<TResult> SendRequestAsync<TResult>(string method, object obj = null)
         {
             var request = new RestRequest(method, Method.POST) {RequestFormat = DataFormat.Json};
             if (obj != null)
@@ -28,6 +29,24 @@ namespace TelegramBot.API
                 request.JsonSerializer = NewtonsoftJsonSerializer.Default;
                 request.AddJsonBody(obj);
             }
+            return Post<TResult>(request);
+        }
+
+        public Task<TResult> SendFile<TResult>(string method, long chatId, byte[] bytes)
+        {
+            RestRequest restRequest = new RestRequest(method)
+            {
+                RequestFormat = DataFormat.Json,
+                Method = Method.POST
+            };
+            restRequest.AddHeader("Content-Type", "multipart/form-data");
+            restRequest.AddParameter("chat_id", chatId);
+            restRequest.AddFile("photo", bytes, "file");
+            return Post<TResult>(restRequest);
+        }
+
+        private async Task<TResult> Post<TResult>(RestRequest request)
+        {
             var result = await _client.ExecutePostTaskAsync(request);
             return JsonConvert.DeserializeObject<TResult>(result.Content);
         }

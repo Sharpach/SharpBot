@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using TelegramBot.API;
 using TelegramBot.NyaBot.Args;
+using TelegramBot.NyaBot.Replies;
 using TelegramBot.NyaBot.Types;
 
 namespace TelegramBot.NyaBot.Commands
@@ -23,7 +24,7 @@ namespace TelegramBot.NyaBot.Commands
             throw new NotImplementedException();
         }
 
-        public override async Task<IEnumerable<string>> Invoke(TelegramMessageEventArgs input)
+        public override async Task<IEnumerable<IReply>> Invoke(TelegramMessageEventArgs input)
         {
             await _client.SendRequestAsync<object>("sendMessage", _message);
             return Nothing;

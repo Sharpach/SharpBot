@@ -9,6 +9,7 @@ using TelegramBot.API;
 using TelegramBot.API.Models;
 using TelegramBot.NyaBot.Args;
 using TelegramBot.NyaBot.Commands;
+using TelegramBot.NyaBot.Replies;
 using TelegramBot.NyaBot.Types;
 using TelegramBot.NyaBot.Updates;
 
@@ -20,12 +21,14 @@ namespace TelegramBot.NyaBot
         private readonly ApiClient _api;
         private readonly ICommandInvoker _invoker;
         private readonly IUpdatesProvider _updatesProvider;
+        private readonly IReplySender _replySender;
 
-        public NyanBot(ApiClient api, ICommandInvoker invoker, IUpdatesProvider updatesProvider)
+        public NyanBot(ApiClient api, ICommandInvoker invoker, IUpdatesProvider updatesProvider, IReplySender replySender)
         {
             _api = api;
             _invoker = invoker;
             _updatesProvider = updatesProvider;
+            _replySender = replySender;
         }
 
         internal async Task Start()
@@ -40,8 +43,6 @@ namespace TelegramBot.NyaBot
         }
 
         internal bool IsRunning { get; private set; }
-
-
 
 
   //      internal void EditMessageReplyMarkup(string chatId = null, int messageId = 0, string inlineMessageId = null,
@@ -285,15 +286,7 @@ namespace TelegramBot.NyaBot
                         var results = await _invoker.Invoke(args);
                         foreach (var result in results)
                         {
-                            await _api.SendRequestAsync<object>("sendMessage", new MessageToSend
-                            {
-                                ChatId = args.ChatId.ToString(),
-                                Text = result,
-                                DisableWebPagePreview = false,
-                                DisableNotification = false,
-                                ReplayToMessageId = 0,
-                                ReplyMarkup = null
-                            });
+                            await _replySender.Send(result, args.ChatId);
                             await Task.Delay(300);
                         }
                         
@@ -329,13 +322,6 @@ namespace TelegramBot.NyaBot
                 }
                 throw;
             }
-        }
-
-
-        private string EscapeSpecialCharacters(string text)
-        {
-            var result = text.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
-            return result;
         }
 
         internal event InlineQueryHandler OnInlineQuery;

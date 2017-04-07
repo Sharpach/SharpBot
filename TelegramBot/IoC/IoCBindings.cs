@@ -8,6 +8,7 @@ using Ninject.Modules;
 using TelegramBot.API;
 using TelegramBot.NyaBot;
 using TelegramBot.NyaBot.Commands;
+using TelegramBot.NyaBot.Replies;
 using TelegramBot.NyaBot.Updates;
 
 namespace TelegramBot.IoC
@@ -20,6 +21,7 @@ namespace TelegramBot.IoC
             Bind<ApiClient>().ToConstant(new ApiClient(ConfigurationManager.AppSettings["token"]));
             Bind<ICommandInvoker>().To<CommandInvoker>();
             Bind<IUpdatesProvider>().To<UpdatesProvider>();
+            Bind<IReplySender>().To<ReplySender>();
         }
     }
 }

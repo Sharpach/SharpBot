@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TelegramBot.API;
 using TelegramBot.NyaBot.Args;
+using TelegramBot.NyaBot.Replies;
 
 namespace TelegramBot.NyaBot.Commands
 {
@@ -23,9 +24,9 @@ namespace TelegramBot.NyaBot.Commands
 
         public readonly MeCommand Me;
 
-        public async Task<IEnumerable<string>> Invoke(TelegramMessageEventArgs input)
+        public async Task<IEnumerable<IReply>> Invoke(TelegramMessageEventArgs input)
         {
-            var result = new List<string>();
+            var result = new List<IReply>();
             foreach (var command in Commands)
             {
                 if (!command.ShouldInvoke(input)) continue;
