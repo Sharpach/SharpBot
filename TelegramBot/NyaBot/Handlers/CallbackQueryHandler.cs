@@ -1,6 +1,6 @@
-﻿using TelegramBot.API_Classes;
+﻿using TelegramBot.NyaBot.Args;
 
-namespace TelegramBot
+namespace TelegramBot.NyaBot
 {
     internal delegate void CallbackQueryHandler(CallbackQueryEventArgs a);
 }

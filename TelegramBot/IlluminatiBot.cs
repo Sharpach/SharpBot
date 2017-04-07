@@ -8,10 +8,10 @@ namespace TelegramBot
 {
     class IlluminatiBot
     {
-        const string TOKEN = @"334103433:AAEc9KxmTjbTyzjK2DFpcuWUeUwQIPBKOi8";
-        const string URI = @"https://api.telegram.org/bot";
+        const string Token = @"334103433:AAEc9KxmTjbTyzjK2DFpcuWUeUwQIPBKOi8";
+        const string Uri = @"https://api.telegram.org/bot";
 
-        private int _updateID = 0;
+        private int _updateId = 0;
 
 
         public IlluminatiBot()
@@ -25,8 +25,8 @@ namespace TelegramBot
 
         void GetUpdates()
         {
-            Console.WriteLine($"Обновление: {_updateID}");
-            var req = (HttpWebRequest)WebRequest.Create($"{URI}{TOKEN}/getUpdates?offset={_updateID}");
+            Console.WriteLine($"Обновление: {_updateId}");
+            var req = (HttpWebRequest)WebRequest.Create($"{Uri}{Token}/getUpdates?offset={_updateId}");
             var resp = (HttpWebResponse)req.GetResponse();
 
             using (var stream = resp.GetResponseStream())
@@ -63,7 +63,7 @@ namespace TelegramBot
             int i = 0;
             foreach (var update in botResponcse.Updates)
             {
-                _updateID = update.UpdateId;
+                _updateId = update.UpdateId;
                 Console.WriteLine(update.Message.Text);
                 try
                 {

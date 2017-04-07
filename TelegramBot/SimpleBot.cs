@@ -7,9 +7,9 @@ namespace TelegramBot
 {
     class SimpleBot
     {
-        const string TOKEN = @"375416144:AAHDLsJ_0MOow-u_LbwdWqRvfB4uyRByryQ";
-        const string URI = @"https://api.telegram.org/bot";
-        const string GETUPDATES = @"/getUpdates";
+        const string Token = @"375416144:AAHDLsJ_0MOow-u_LbwdWqRvfB4uyRByryQ";
+        const string Uri = @"https://api.telegram.org/bot";
+        const string Getupdates = @"/getUpdates";
 
         private int _updateId = 0;
 
@@ -25,7 +25,7 @@ namespace TelegramBot
         void GetUpdates()
         {
             Console.WriteLine($"Обновление: {_updateId}");
-            var req = (HttpWebRequest)WebRequest.Create($"{URI}{TOKEN}{GETUPDATES}?offset={(_updateId + 1)}");
+            var req = (HttpWebRequest)WebRequest.Create($"{Uri}{Token}{Getupdates}?offset={(_updateId + 1)}");
             var resp = (HttpWebResponse)req.GetResponse();
 
             using (var sReader = new StreamReader(resp.GetResponseStream()))
@@ -40,7 +40,7 @@ namespace TelegramBot
                     {
                         _updateId = current.UpdateId;
                         messageText = current.Message.Text;
-                        updateMessage(messageText); // Our sexy delegate
+                        UpdateMessage(messageText); // Our sexy delegate
                     }
                 }
                 catch (Exception e)
@@ -50,7 +50,7 @@ namespace TelegramBot
             }
         }
 
-        public event ControlMessages updateMessage;
+        public event ControlMessages UpdateMessage;
     }
     internal delegate void ControlMessages(string message );
 }

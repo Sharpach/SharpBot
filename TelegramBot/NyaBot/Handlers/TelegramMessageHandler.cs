@@ -1,7 +1,6 @@
-﻿using System;
-using TelegramBot.NyaBot.Args;
+﻿using TelegramBot.NyaBot.Args;
 
-namespace TelegramBot.NyaBot.Handlers
+namespace TelegramBot.NyaBot
 {
     internal delegate void TelegramMessageHandler(TelegramMessageEventArgs a);
 }

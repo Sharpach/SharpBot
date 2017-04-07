@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
-using TelegramBot.API_Classes;
 
-namespace TelegramBot
+namespace TelegramBot.API_Classes
 {
     internal class ApiResponse<T>
     {

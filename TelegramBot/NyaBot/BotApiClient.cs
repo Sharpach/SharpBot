@@ -8,13 +8,13 @@ namespace TelegramBot.NyaBot
 {
     internal class BotApiClient
     {
-        const string baseApiAddress = @"https://api.telegram.org/bot";
+        const string BaseApiAddress = @"https://api.telegram.org/bot";
 
-        private readonly string token;
+        private readonly string _token;
 
         public BotApiClient(string token)
         {
-            this.token = token;
+            this._token = token;
         }
 
         public string SendRequest(string methodName, object o = null)
@@ -25,7 +25,7 @@ namespace TelegramBot.NyaBot
 
             try
             {
-                var webRequest = (HttpWebRequest)WebRequest.Create($"{baseApiAddress}{token}/{methodName}");
+                var webRequest = (HttpWebRequest)WebRequest.Create($"{BaseApiAddress}{_token}/{methodName}");
                 webRequest.Method = "POST";
 
                 if (o != null)
@@ -63,7 +63,7 @@ namespace TelegramBot.NyaBot
 
             try
             {
-                var request = (HttpWebRequest)WebRequest.Create($"{baseApiAddress}{token}/{methodName}");
+                var request = (HttpWebRequest)WebRequest.Create($"{BaseApiAddress}{_token}/{methodName}");
                 request.Method = "POST";
 
                 if (o != null)

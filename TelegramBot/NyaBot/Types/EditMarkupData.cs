@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using TelegramBot.API_Classes;
 
-namespace TelegramBot
+namespace TelegramBot.NyaBot.Types
 {
     internal class EditMarkupData
     {

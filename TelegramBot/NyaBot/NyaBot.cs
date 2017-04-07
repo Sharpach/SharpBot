@@ -5,38 +5,37 @@ using Newtonsoft.Json;
 using TelegramBot.API_Classes;
 
 using TelegramBot.NyaBot.Args;
-using TelegramBot.NyaBot.Handlers;
 using TelegramBot.NyaBot.Types;
 
 namespace TelegramBot.NyaBot
 {
     public class NyanBot
     {
-        private bool isRun = false;
-        private int updateOffset = 0;
-        private BotApiClient api = null;
+        private bool _isRun = false;
+        private int _updateOffset = 0;
+        private BotApiClient _api;
 
-        internal NyanBot(string token)
+        internal NyanBot(BotApiClient api)
         {
-            api = new BotApiClient(token);
+            this._api = api;
         }
 
         internal void Start()
         {
-            isRun = true;
+            _isRun = true;
             UpdatesThread();
         }
 
         internal void Stop()
         {
-            isRun = false;
+            _isRun = false;
         }
 
-        internal bool IsRun => isRun;
+        internal bool IsRun => _isRun;
 
         internal User GetMe()
         {
-            var json = api.SendRequest("getMe");
+            var json = _api.SendRequest("getMe");
             try
             {
                 var result = JsonConvert.DeserializeObject<ApiResponse<User>>(json);
@@ -52,7 +51,7 @@ namespace TelegramBot.NyaBot
 
         internal async Task<User> GetMeAsync()
         {
-            var json = await api.SendRequestAsync("getMe");
+            var json = await _api.SendRequestAsync("getMe");
             try
             {
                 var result = JsonConvert.DeserializeObject<ApiResponse<User>>(json);
@@ -79,7 +78,7 @@ namespace TelegramBot.NyaBot
                 ReplyMarkup = replyMarkup
             };
 
-            api.SendRequest("sendMessage", message);
+            _api.SendRequest("sendMessage", message);
         }
 
         internal async Task SendMessageAsync(string chatId, string text, bool disableWebPagePreview = false,
@@ -95,7 +94,7 @@ namespace TelegramBot.NyaBot
                 ReplyMarkup = replyMarkup
             };
 
-            await api.SendRequestAsync("sendMessage", message);
+            await _api.SendRequestAsync("sendMessage", message);
         }
 
         internal void EditMessageText(string chatId, string text, int messageId = 0, string inlineMessageId = null,
@@ -111,7 +110,7 @@ namespace TelegramBot.NyaBot
                 ReplyMarkup = replyMarkup
             };
 
-            api.SendRequest("editMessageText", edit);
+            _api.SendRequest("editMessageText", edit);
         }
 
         internal async Task EditMessageTextAsync(string chatId, string text, int messageId = 0, string inlineMessageId = null,
@@ -127,7 +126,7 @@ namespace TelegramBot.NyaBot
                 ReplyMarkup = replyMarkup
             };
 
-            await api.SendRequestAsync("editMessageText", edit);
+            await _api.SendRequestAsync("editMessageText", edit);
         }
 
         internal void EditMessageReplyMarkup(string chatId = null, int messageId = 0, string inlineMessageId = null,
@@ -141,7 +140,7 @@ namespace TelegramBot.NyaBot
                 ReplyMarkup = replyMarkup
             };
 
-            api.SendRequest("editMessageReplyMarkup", edit);
+            _api.SendRequest("editMessageReplyMarkup", edit);
         }
 
         internal async Task EditMessageReplyMarkupAsync(string chatId = null, int messageId = 0, string inlineMessageId = null,
@@ -155,7 +154,7 @@ namespace TelegramBot.NyaBot
                 ReplyMarkup = replyMarkup
             };
 
-            await api.SendRequestAsync("editMessageReplyMarkup", edit);
+            await _api.SendRequestAsync("editMessageReplyMarkup", edit);
         }
 
         internal void SendPhoto(string chatId, string photo, string caption = null, bool disableNotification = false,
@@ -171,7 +170,7 @@ namespace TelegramBot.NyaBot
                 ReplyMarkup = replyMarkup
             };
 
-            api.SendRequest("sendPhoto", photow);
+            _api.SendRequest("sendPhoto", photow);
 		}
 
         internal async Task SendPhotoAsync(string chatId, string photo, string caption = null, bool disableNotification = false,
@@ -187,7 +186,7 @@ namespace TelegramBot.NyaBot
                 ReplyMarkup = replyMarkup
             };
 
-            await api.SendRequestAsync("sendPhoto", photow);
+            await _api.SendRequestAsync("sendPhoto", photow);
         }
 
         internal void SendSticker(string chatId, string sticker, bool disableNotification = false,
@@ -202,7 +201,7 @@ namespace TelegramBot.NyaBot
                 ReplyMarkup = replyMarkup
             };
 
-            api.SendRequest("sendSticker", stickerw);
+            _api.SendRequest("sendSticker", stickerw);
         }
 
         internal async Task SendStickerAsync(string chatId, string sticker, bool disableNotification = false,
@@ -217,7 +216,7 @@ namespace TelegramBot.NyaBot
                 ReplyMarkup = replyMarkup
             };
 
-            await api.SendRequestAsync("sendSticker", stickerw);
+            await _api.SendRequestAsync("sendSticker", stickerw);
         }
 
         internal void SendChatAction(string chatId, ChatAction action)
@@ -252,7 +251,7 @@ namespace TelegramBot.NyaBot
                 Action = actionString
             };
 
-            api.SendRequest("sendChatAction", actionw);
+            _api.SendRequest("sendChatAction", actionw);
         }
 
         internal async Task SendChatActionAsync(string chatId, ChatAction action)
@@ -287,7 +286,7 @@ namespace TelegramBot.NyaBot
                 Action = actionString
             };
 
-            await api.SendRequestAsync("sendChatAction", actionw);
+            await _api.SendRequestAsync("sendChatAction", actionw);
         }
 
         // normal versions
@@ -342,13 +341,13 @@ namespace TelegramBot.NyaBot
         private void UpdatesThread()
         {
             Logger.LogMessage("Бот запущен.");
-            while (isRun)
+            while (_isRun)
             {
                 var updates = GetUpdates();
 
                 foreach (var update in updates)
 				{
-                    updateOffset = update.UpdateId + 1;
+                    _updateOffset = update.UpdateId + 1;
 
                     if (update.CallbackQuery != null && OnCallbackQuery != null)
                     {
@@ -393,10 +392,10 @@ namespace TelegramBot.NyaBot
             {
                 var request = new UpdatesRequest
                 {
-                    Offset = updateOffset
+                    Offset = _updateOffset
                 };
 
-                var jsonText = api.SendRequest("getUpdates", request);
+                var jsonText = _api.SendRequest("getUpdates", request);
                 var response = JsonConvert.DeserializeObject<Response>(jsonText);
                 if (response.Success)
                 {
@@ -409,7 +408,7 @@ namespace TelegramBot.NyaBot
             }
             catch (Exception ex)
             {
-                isRun = false;
+                _isRun = false;
                 if (ex is WebException || ex is JsonException)
                 {
                     Logger.LogFatal(ex);

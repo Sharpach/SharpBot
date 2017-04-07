@@ -1,7 +1,7 @@
 ﻿using System;
 using TelegramBot.API_Classes;
 
-namespace TelegramBot
+namespace TelegramBot.NyaBot.Args
 {
     internal class CallbackQueryEventArgs : EventArgs
     {
