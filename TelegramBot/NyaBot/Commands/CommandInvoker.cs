@@ -17,7 +17,7 @@ namespace TelegramBot.NyaBot.Commands
         {
             _client = client;
             Me = new MeCommand(_client);
-            Commands = new BaseCommand[] {Me, new TestCommand()};
+            Commands = new BaseCommand[] {Me, new TestCommand(), new CatCommand(), };
         }
 
         public IReadOnlyList<BaseCommand> Commands { get; } 

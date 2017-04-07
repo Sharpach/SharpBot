@@ -1,23 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using TelegramBot.NyaBot.Args;
 using TelegramBot.NyaBot.Replies;
 
-namespace TelegramBot.NyaBot.Commands.Impl
+namespace TelegramBot.NyaBot.Commands
 {
     class CatCommand : BaseCommand
     {
         public override bool ShouldInvoke(TelegramMessageEventArgs input)
         {
-            throw new NotImplementedException();
+            return input?.Message?.Text?.ToUpper().Contains("КОТ") ?? false;
         }
 
-        public override Task<IEnumerable<IReply>> Invoke(TelegramMessageEventArgs input)
+        public override async Task<IEnumerable<IReply>> Invoke(TelegramMessageEventArgs input)
         {
-            throw new NotImplementedException();
+            byte[] image = await GetRandomCatImage();
+            return new IReply[]
+            {
+                new TextReply("Кто-то сказал " + input.Message.Text.Replace("кот", "КОТ") + "???"),
+                new ImageReply(image)
+            };
+        }
+
+        
+
+        private Task<byte[]> GetRandomCatImage()
+        {
+            using (var client = new WebClient())
+            {
+                return client.DownloadDataTaskAsync("http://thecatapi.com/api/images/get");
+            }
         }
     }
 }
