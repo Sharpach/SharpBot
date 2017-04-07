@@ -24,17 +24,10 @@ namespace TelegramBot
 
         static void Main(string[] args)
         {
-        	Logger.Init(true, false);
-
-
-            //
             _bot = _kernel.Get<NyanBot>();
             _botHelper = new BotHelper("BaaakaBot");
 
             _random = new Random();
-
-            //_bot.OnMessage += Bot_OnMessage;
-            _bot.OnCallbackQuery += Bot_OnCallbackQuery;
 
             _startTime = DateTime.Now;
             Task.WaitAll(_bot.Start());
@@ -222,34 +215,33 @@ namespace TelegramBot
         //    }
         //}
 
-        static void Bot_OnCallbackQuery(CallbackQueryEventArgs a)
-        {
-            if (a.CallbackQuery.Data == null)
-            {
-                return;
-            }
-            int n;
-            if (!Int32.TryParse(a.CallbackQuery.Data, out n))
-            {
-                return;
-            }
+        //static void Bot_OnCallbackQuery(CallbackQueryEventArgs a)
+        //{
+        //    if (a.CallbackQuery.Data == null)
+        //    {
+        //        return;
+        //    }
+        //    if (!Int32.TryParse(a.CallbackQuery.Data, out int n))
+        //    {
+        //        return;
+        //    }
 
-            var kb = new InlineKeyboardMarkup
-            {
-                InlineKeyboard = new[]
-                {
-                    new[]
-                    {
-                        new InlineKeyboardButton
-                        {
-                            Text = (n + 1).ToString(),
-                            CallbackData = (n + 1).ToString()
-                        }
-                    }
-                }
-            };
+        //    var kb = new InlineKeyboardMarkup
+        //    {
+        //        InlineKeyboard = new[]
+        //        {
+        //            new[]
+        //            {
+        //                new InlineKeyboardButton
+        //                {
+        //                    Text = (n + 1).ToString(),
+        //                    CallbackData = (n + 1).ToString()
+        //                }
+        //            }
+        //        }
+        //    };
 
             //_bot.EditMessageReplyMarkup(a.CallbackQuery.Message.Chat.Id, a.CallbackQuery.Message.MessageId, replyMarkup: kb);
-        }
+        // }
     }
 }

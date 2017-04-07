@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Ninject.Modules;
 using TelegramBot.API;
+using TelegramBot.Logging;
 using TelegramBot.NyaBot;
 using TelegramBot.NyaBot.Commands;
 using TelegramBot.NyaBot.Replies;
@@ -22,6 +23,7 @@ namespace TelegramBot.IoC
             Bind<ICommandInvoker>().To<CommandInvoker>();
             Bind<IUpdatesProvider>().To<UpdatesProvider>();
             Bind<IReplySender>().To<ReplySender>();
+            Bind<ILogger>().To<ConsoleLogger>();
         }
     }
 }

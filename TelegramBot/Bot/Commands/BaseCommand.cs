@@ -15,19 +15,6 @@ namespace TelegramBot.NyaBot.Commands
 
         public abstract Task<IEnumerable<IReply>> Invoke(TelegramMessageEventArgs input);
 
-        protected void SafeInvoke(Action action)
-        {
-            try
-            {
-                action();
-            }
-            catch (JsonException e)
-            {
-                Logger.LogError(e);
-                throw;
-            }
-        }
-
         protected bool StringEquals(string x, string y)
         {
 
