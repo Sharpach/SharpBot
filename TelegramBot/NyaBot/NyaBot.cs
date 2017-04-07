@@ -1,354 +1,267 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using TelegramBot.API_Classes;
-
+using TelegramBot.API;
+using TelegramBot.API.Models;
 using TelegramBot.NyaBot.Args;
+using TelegramBot.NyaBot.Commands;
 using TelegramBot.NyaBot.Types;
+using TelegramBot.NyaBot.Updates;
 
 namespace TelegramBot.NyaBot
 {
     public class NyanBot
     {
-        private bool _isRun = false;
         private int _updateOffset = 0;
-        private BotApiClient _api;
+        private readonly ApiClient _api;
+        private readonly ICommandInvoker _invoker;
+        private readonly IUpdatesProvider _updatesProvider;
 
-        internal NyanBot(BotApiClient api)
+        public NyanBot(ApiClient api, ICommandInvoker invoker, IUpdatesProvider updatesProvider)
         {
-            this._api = api;
+            _api = api;
+            _invoker = invoker;
+            _updatesProvider = updatesProvider;
         }
 
-        internal void Start()
+        internal async Task Start()
         {
-            _isRun = true;
-            UpdatesThread();
+            IsRunning = true;
+            await UpdatesThread();
         }
 
         internal void Stop()
         {
-            _isRun = false;
+            IsRunning = false;
         }
 
-        internal bool IsRun => _isRun;
+        internal bool IsRunning { get; private set; }
 
-        internal User GetMe()
-        {
-            var json = _api.SendRequest("getMe");
-            try
-            {
-                var result = JsonConvert.DeserializeObject<ApiResponse<User>>(json);
-                if (result.Ok) return result.ResultObject;
-                else return null;
-            }
-            catch (JsonException e)
-            {
-                Logger.LogError(e);
-                return null;
-            }
-        }
 
-        internal async Task<User> GetMeAsync()
-        {
-            var json = await _api.SendRequestAsync("getMe");
-            try
-            {
-                var result = JsonConvert.DeserializeObject<ApiResponse<User>>(json);
-                if (result.Ok) return result.ResultObject;
-                else return null;
-            }
-            catch (JsonException e)
-            {
-                Logger.LogError(e);
-                return null;
-            }
-        }
 
-        internal void SendMessage(string chatId, string text, bool disableWebPagePreview = false,
-                                bool disableNotification = false, int replyToMessageId = 0, object replyMarkup = null)
-        {
-            var message = new MessageToSend
-            {
-                ChatId = chatId,
-                Text = text,
-                DisableWebPagePreview = disableWebPagePreview,
-                DisableNotification = disableNotification,
-                ReplayToMessageId = replyToMessageId,
-                ReplyMarkup = replyMarkup
-            };
 
-            _api.SendRequest("sendMessage", message);
-        }
+  //      internal void EditMessageReplyMarkup(string chatId = null, int messageId = 0, string inlineMessageId = null,
+  //                                         InlineKeyboardMarkup replyMarkup = null)
+  //      {
+  //          var edit = new EditMarkupData
+  //          {
+  //              ChatId = chatId,
+  //              MessageId = messageId,
+  //              InlineMessageId = inlineMessageId,
+  //              ReplyMarkup = replyMarkup
+  //          };
 
-        internal async Task SendMessageAsync(string chatId, string text, bool disableWebPagePreview = false,
-                                bool disableNotification = false, int replyToMessageId = 0, object replyMarkup = null)
-        {
-            var message = new MessageToSend
-            {
-                ChatId = chatId,
-                Text = text,
-                DisableWebPagePreview = disableWebPagePreview,
-                DisableNotification = disableNotification,
-                ReplayToMessageId = replyToMessageId,
-                ReplyMarkup = replyMarkup
-            };
+  //          _api.SendRequest("editMessageReplyMarkup", edit);
+  //      }
 
-            await _api.SendRequestAsync("sendMessage", message);
-        }
+  //      internal async Task EditMessageReplyMarkupAsync(string chatId = null, int messageId = 0, string inlineMessageId = null,
+  //                                         InlineKeyboardMarkup replyMarkup = null)
+  //      {
+  //          var edit = new EditMarkupData
+  //          {
+  //              ChatId = chatId,
+  //              MessageId = messageId,
+  //              InlineMessageId = inlineMessageId,
+  //              ReplyMarkup = replyMarkup
+  //          };
 
-        internal void EditMessageText(string chatId, string text, int messageId = 0, string inlineMessageId = null,
-                             bool disableWebPagePreview = false, object replyMarkup = null)
-        {
-            var edit = new EditMessageData
-            {
-                ChatId = chatId,
-                Text = text,
-                MessageId = messageId,
-                InlineMessageId = inlineMessageId,
-                DisableWebPagePreview = disableWebPagePreview,
-                ReplyMarkup = replyMarkup
-            };
+  //          await _api.SendRequestAsync("editMessageReplyMarkup", edit);
+  //      }
 
-            _api.SendRequest("editMessageText", edit);
-        }
+  //      internal void SendPhoto(string chatId, string photo, string caption = null, bool disableNotification = false,
+  //                            int replyToMessageId = 0, object replyMarkup = null)
+  //      {
+  //          var photow = new PhotoToSend
+  //          {
+  //              ChatId = chatId,
+  //              Photo = photo,
+  //              Caption = caption,
+  //              DisableNotification = disableNotification,
+  //              ReplyToMessageId = replyToMessageId,
+  //              ReplyMarkup = replyMarkup
+  //          };
 
-        internal async Task EditMessageTextAsync(string chatId, string text, int messageId = 0, string inlineMessageId = null,
-                             bool disableWebPagePreview = false, object replyMarkup = null)
-        {
-            var edit = new EditMessageData
-            {
-                ChatId = chatId,
-                Text = text,
-                MessageId = messageId,
-                InlineMessageId = inlineMessageId,
-                DisableWebPagePreview = disableWebPagePreview,
-                ReplyMarkup = replyMarkup
-            };
+  //          _api.SendRequest("sendPhoto", photow);
+		//}
 
-            await _api.SendRequestAsync("editMessageText", edit);
-        }
+  //      internal async Task SendPhotoAsync(string chatId, string photo, string caption = null, bool disableNotification = false,
+  //                    int replyToMessageId = 0, object replyMarkup = null)
+  //      {
+  //          var photow = new PhotoToSend
+  //          {
+  //              ChatId = chatId,
+  //              Photo = photo,
+  //              Caption = caption,
+  //              DisableNotification = disableNotification,
+  //              ReplyToMessageId = replyToMessageId,
+  //              ReplyMarkup = replyMarkup
+  //          };
 
-        internal void EditMessageReplyMarkup(string chatId = null, int messageId = 0, string inlineMessageId = null,
-                                           InlineKeyboardMarkup replyMarkup = null)
-        {
-            var edit = new EditMarkupData
-            {
-                ChatId = chatId,
-                MessageId = messageId,
-                InlineMessageId = inlineMessageId,
-                ReplyMarkup = replyMarkup
-            };
+  //          await _api.SendRequestAsync("sendPhoto", photow);
+  //      }
 
-            _api.SendRequest("editMessageReplyMarkup", edit);
-        }
+  //      internal void SendSticker(string chatId, string sticker, bool disableNotification = false,
+  //                              int replyToMessageId = 0, object replyMarkup = null)
+  //      {
+  //          var stickerw = new StickerToSend
+  //          {
+  //              ChatId = chatId,
+  //              Sticker = sticker,
+  //              DisableNotification = disableNotification,
+  //              ReplyToMessageId = replyToMessageId,
+  //              ReplyMarkup = replyMarkup
+  //          };
 
-        internal async Task EditMessageReplyMarkupAsync(string chatId = null, int messageId = 0, string inlineMessageId = null,
-                                           InlineKeyboardMarkup replyMarkup = null)
-        {
-            var edit = new EditMarkupData
-            {
-                ChatId = chatId,
-                MessageId = messageId,
-                InlineMessageId = inlineMessageId,
-                ReplyMarkup = replyMarkup
-            };
+  //          _api.SendRequest("sendSticker", stickerw);
+  //      }
 
-            await _api.SendRequestAsync("editMessageReplyMarkup", edit);
-        }
+  //      internal async Task SendStickerAsync(string chatId, string sticker, bool disableNotification = false,
+  //                      int replyToMessageId = 0, object replyMarkup = null)
+  //      {
+  //          var stickerw = new StickerToSend
+  //          {
+  //              ChatId = chatId,
+  //              Sticker = sticker,
+  //              DisableNotification = disableNotification,
+  //              ReplyToMessageId = replyToMessageId,
+  //              ReplyMarkup = replyMarkup
+  //          };
 
-        internal void SendPhoto(string chatId, string photo, string caption = null, bool disableNotification = false,
-                              int replyToMessageId = 0, object replyMarkup = null)
-        {
-            var photow = new PhotoToSend
-            {
-                ChatId = chatId,
-                Photo = photo,
-                Caption = caption,
-                DisableNotification = disableNotification,
-                ReplyToMessageId = replyToMessageId,
-                ReplyMarkup = replyMarkup
-            };
+  //          await _api.SendRequestAsync("sendSticker", stickerw);
+  //      }
 
-            _api.SendRequest("sendPhoto", photow);
-		}
+  //      internal void SendChatAction(string chatId, ChatAction action)
+  //      {
+  //          string actionString = String.Empty;
 
-        internal async Task SendPhotoAsync(string chatId, string photo, string caption = null, bool disableNotification = false,
-                      int replyToMessageId = 0, object replyMarkup = null)
-        {
-            var photow = new PhotoToSend
-            {
-                ChatId = chatId,
-                Photo = photo,
-                Caption = caption,
-                DisableNotification = disableNotification,
-                ReplyToMessageId = replyToMessageId,
-                ReplyMarkup = replyMarkup
-            };
+  //          switch (action)
+  //          {
+  //              case ChatAction.Typing:
+  //                  actionString = "typing";
+  //                  break;
+  //              case ChatAction.UploadPhoto:
+  //                  actionString = "upload_photo";
+  //                  break;
+  //              case ChatAction.UploadAudio:
+  //                  actionString = "upload_audio";
+  //                  break;
+  //              case ChatAction.UploadDocument:
+  //                  actionString = "upload_document";
+  //                  break;
+  //              case ChatAction.UploadVideo:
+  //                  actionString = "upload_video";
+  //                  break;
+  //              case ChatAction.FindLocation:
+  //                  actionString = "find_location";
+  //                  break;
+  //          }
 
-            await _api.SendRequestAsync("sendPhoto", photow);
-        }
+  //          var actionw = new ChatActionToSend
+  //          {
+  //              ChatId = chatId,
+  //              Action = actionString
+  //          };
 
-        internal void SendSticker(string chatId, string sticker, bool disableNotification = false,
-                                int replyToMessageId = 0, object replyMarkup = null)
-        {
-            var stickerw = new StickerToSend
-            {
-                ChatId = chatId,
-                Sticker = sticker,
-                DisableNotification = disableNotification,
-                ReplyToMessageId = replyToMessageId,
-                ReplyMarkup = replyMarkup
-            };
+  //          _api.SendRequest("sendChatAction", actionw);
+  //      }
 
-            _api.SendRequest("sendSticker", stickerw);
-        }
+  //      internal async Task SendChatActionAsync(string chatId, ChatAction action)
+  //      {
+  //          string actionString = String.Empty;
 
-        internal async Task SendStickerAsync(string chatId, string sticker, bool disableNotification = false,
-                        int replyToMessageId = 0, object replyMarkup = null)
-        {
-            var stickerw = new StickerToSend
-            {
-                ChatId = chatId,
-                Sticker = sticker,
-                DisableNotification = disableNotification,
-                ReplyToMessageId = replyToMessageId,
-                ReplyMarkup = replyMarkup
-            };
+  //          switch (action)
+  //          {
+  //              case ChatAction.Typing:
+  //                  actionString = "typing";
+  //                  break;
+  //              case ChatAction.UploadPhoto:
+  //                  actionString = "upload_photo";
+  //                  break;
+  //              case ChatAction.UploadAudio:
+  //                  actionString = "upload_audio";
+  //                  break;
+  //              case ChatAction.UploadDocument:
+  //                  actionString = "upload_document";
+  //                  break;
+  //              case ChatAction.UploadVideo:
+  //                  actionString = "upload_video";
+  //                  break;
+  //              case ChatAction.FindLocation:
+  //                  actionString = "find_location";
+  //                  break;
+  //          }
 
-            await _api.SendRequestAsync("sendSticker", stickerw);
-        }
+  //          var actionw = new ChatActionToSend
+  //          {
+  //              ChatId = chatId,
+  //              Action = actionString
+  //          };
 
-        internal void SendChatAction(string chatId, ChatAction action)
-        {
-            string actionString = String.Empty;
+  //          await _api.SendRequestAsync("sendChatAction", actionw);
+  //      }
 
-            switch (action)
-            {
-                case ChatAction.Typing:
-                    actionString = "typing";
-                    break;
-                case ChatAction.UploadPhoto:
-                    actionString = "upload_photo";
-                    break;
-                case ChatAction.UploadAudio:
-                    actionString = "upload_audio";
-                    break;
-                case ChatAction.UploadDocument:
-                    actionString = "upload_document";
-                    break;
-                case ChatAction.UploadVideo:
-                    actionString = "upload_video";
-                    break;
-                case ChatAction.FindLocation:
-                    actionString = "find_location";
-                    break;
-            }
+  //      // normal versions
+  //      internal void SendMessage(long chatId, string text, bool disableWebPagePreview = false,
+  //                              bool disableNotification = false, int replyToMessageId = 0, object replyMarkup = null) =>
+  //      SendMessage(chatId.ToString(), text, disableWebPagePreview, disableNotification, replyToMessageId, replyMarkup);
 
-            var actionw = new ChatActionToSend
-            {
-                ChatId = chatId,
-                Action = actionString
-            };
+  //      internal void EditMessageText(long chatId, string text, int messageId = 0, string inlineMessageId = null,
+  //                           bool disableWebPagePreview = false, object replyMarkup = null) =>
+  //      EditMessageText(chatId.ToString(), text, messageId, inlineMessageId, disableWebPagePreview, replyMarkup);
 
-            _api.SendRequest("sendChatAction", actionw);
-        }
+  //      internal void EditMessageReplyMarkup(long chatId = 0, int messageId = 0, string inlineMessageId = null,
+  //                                         InlineKeyboardMarkup replyMarkup = null) =>
+  //      EditMessageReplyMarkup(chatId.ToString(), messageId, inlineMessageId, replyMarkup);
 
-        internal async Task SendChatActionAsync(string chatId, ChatAction action)
-        {
-            string actionString = String.Empty;
+  //      internal void SendPhoto(long chatId, string photo, string caption = null, bool disableNotification = false,
+  //                            int replyToMessageId = 0, object replyMarkup = null) =>
+  //      SendPhoto(chatId.ToString(), photo, caption, disableNotification, replyToMessageId, replyMarkup);
 
-            switch (action)
-            {
-                case ChatAction.Typing:
-                    actionString = "typing";
-                    break;
-                case ChatAction.UploadPhoto:
-                    actionString = "upload_photo";
-                    break;
-                case ChatAction.UploadAudio:
-                    actionString = "upload_audio";
-                    break;
-                case ChatAction.UploadDocument:
-                    actionString = "upload_document";
-                    break;
-                case ChatAction.UploadVideo:
-                    actionString = "upload_video";
-                    break;
-                case ChatAction.FindLocation:
-                    actionString = "find_location";
-                    break;
-            }
+  //      internal void SendSticker(long chatId, string sticker, bool disableNotification = false,
+  //                              int replyToMessageId = 0, object replyMarkup = null) =>
+  //      SendSticker(chatId.ToString(), sticker, disableNotification, replyToMessageId, replyMarkup);
 
-            var actionw = new ChatActionToSend
-            {
-                ChatId = chatId,
-                Action = actionString
-            };
+  //      internal void SendChatAction(long chatId, ChatAction action) =>
+  //      SendChatAction(chatId.ToString(), action);
 
-            await _api.SendRequestAsync("sendChatAction", actionw);
-        }
+  //      //async versions
+  //      internal async Task SendMessageAsync(long chatId, string text, bool disableWebPagePreview = false,
+  //                              bool disableNotification = false, int replyToMessageId = 0, object replyMarkup = null) =>
+  //      await SendMessageAsync(chatId.ToString(), text, disableWebPagePreview, disableNotification, replyToMessageId, replyMarkup);
 
-        // normal versions
-        internal void SendMessage(long chatId, string text, bool disableWebPagePreview = false,
-                                bool disableNotification = false, int replyToMessageId = 0, object replyMarkup = null) =>
-        SendMessage(chatId.ToString(), text, disableWebPagePreview, disableNotification, replyToMessageId, replyMarkup);
+  //      internal async Task EditMessageTextAsync(long chatId, string text, int messageId = 0, string inlineMessageId = null,
+  //                           bool disableWebPagePreview = false, object replyMarkup = null) =>
+  //      await EditMessageTextAsync(chatId.ToString(), text, messageId, inlineMessageId, disableWebPagePreview, replyMarkup);
 
-        internal void EditMessageText(long chatId, string text, int messageId = 0, string inlineMessageId = null,
-                             bool disableWebPagePreview = false, object replyMarkup = null) =>
-        EditMessageText(chatId.ToString(), text, messageId, inlineMessageId, disableWebPagePreview, replyMarkup);
+  //      internal async Task EditMessageReplyMarkupAsync(long chatId = 0, int messageId = 0, string inlineMessageId = null,
+  //                                         InlineKeyboardMarkup replyMarkup = null) =>
+  //      await EditMessageReplyMarkupAsync(chatId.ToString(), messageId, inlineMessageId, replyMarkup);
 
-        internal void EditMessageReplyMarkup(long chatId = 0, int messageId = 0, string inlineMessageId = null,
-                                           InlineKeyboardMarkup replyMarkup = null) =>
-        EditMessageReplyMarkup(chatId.ToString(), messageId, inlineMessageId, replyMarkup);
+  //      internal async Task SendPhotoAsync(long chatId, string photo, string caption = null, bool disableNotification = false,
+  //                            int replyToMessageId = 0, object replyMarkup = null) =>
+  //      await SendPhotoAsync(chatId.ToString(), photo, caption, disableNotification, replyToMessageId, replyMarkup);
 
-        internal void SendPhoto(long chatId, string photo, string caption = null, bool disableNotification = false,
-                              int replyToMessageId = 0, object replyMarkup = null) =>
-        SendPhoto(chatId.ToString(), photo, caption, disableNotification, replyToMessageId, replyMarkup);
+  //      internal async Task SendStickerAsync(long chatId, string sticker, bool disableNotification = false,
+  //                              int replyToMessageId = 0, object replyMarkup = null) =>
+  //      await SendStickerAsync(chatId.ToString(), sticker, disableNotification, replyToMessageId, replyMarkup);
 
-        internal void SendSticker(long chatId, string sticker, bool disableNotification = false,
-                                int replyToMessageId = 0, object replyMarkup = null) =>
-        SendSticker(chatId.ToString(), sticker, disableNotification, replyToMessageId, replyMarkup);
+  //      internal async Task SendChatActionAsync(long chatId, ChatAction action) =>
+  //      await SendChatActionAsync(chatId.ToString(), action);
+  //      // end
 
-        internal void SendChatAction(long chatId, ChatAction action) =>
-        SendChatAction(chatId.ToString(), action);
-
-        //async versions
-        internal async Task SendMessageAsync(long chatId, string text, bool disableWebPagePreview = false,
-                                bool disableNotification = false, int replyToMessageId = 0, object replyMarkup = null) =>
-        await SendMessageAsync(chatId.ToString(), text, disableWebPagePreview, disableNotification, replyToMessageId, replyMarkup);
-
-        internal async Task EditMessageTextAsync(long chatId, string text, int messageId = 0, string inlineMessageId = null,
-                             bool disableWebPagePreview = false, object replyMarkup = null) =>
-        await EditMessageTextAsync(chatId.ToString(), text, messageId, inlineMessageId, disableWebPagePreview, replyMarkup);
-
-        internal async Task EditMessageReplyMarkupAsync(long chatId = 0, int messageId = 0, string inlineMessageId = null,
-                                           InlineKeyboardMarkup replyMarkup = null) =>
-        await EditMessageReplyMarkupAsync(chatId.ToString(), messageId, inlineMessageId, replyMarkup);
-
-        internal async Task SendPhotoAsync(long chatId, string photo, string caption = null, bool disableNotification = false,
-                              int replyToMessageId = 0, object replyMarkup = null) =>
-        await SendPhotoAsync(chatId.ToString(), photo, caption, disableNotification, replyToMessageId, replyMarkup);
-
-        internal async Task SendStickerAsync(long chatId, string sticker, bool disableNotification = false,
-                                int replyToMessageId = 0, object replyMarkup = null) =>
-        await SendStickerAsync(chatId.ToString(), sticker, disableNotification, replyToMessageId, replyMarkup);
-
-        internal async Task SendChatActionAsync(long chatId, ChatAction action) =>
-        await SendChatActionAsync(chatId.ToString(), action);
-        // end
-
-        private void UpdatesThread()
+        private async Task UpdatesThread()
         {
             Logger.LogMessage("Бот запущен.");
-            while (_isRun)
+            while (IsRunning)
             {
-                var updates = GetUpdates();
+                var updates = await GetUpdates();
 
                 foreach (var update in updates)
 				{
-                    _updateOffset = update.UpdateId + 1;
-
                     if (update.CallbackQuery != null && OnCallbackQuery != null)
                     {
                         var args = new CallbackQueryEventArgs
@@ -359,7 +272,7 @@ namespace TelegramBot.NyaBot
                         OnCallbackQuery(args);
                     }
 
-                    if (update.Message != null && OnMessage != null)
+                    if (update.Message != null)
                     {
                         var args = new TelegramMessageEventArgs
                         {
@@ -369,7 +282,21 @@ namespace TelegramBot.NyaBot
                             Message = update.Message
                         };
 
-                        OnMessage(args);
+                        var results = await _invoker.Invoke(args);
+                        foreach (var result in results)
+                        {
+                            await _api.SendRequestAsync<object>("sendMessage", new MessageToSend
+                            {
+                                ChatId = args.ChatId.ToString(),
+                                Text = result,
+                                DisableWebPagePreview = false,
+                                DisableNotification = false,
+                                ReplayToMessageId = 0,
+                                ReplyMarkup = null
+                            });
+                            await Task.Delay(300);
+                        }
+                        
                     }
                     if (update.InlineQuery != null && OnInlineQuery != null)
                     {
@@ -382,49 +309,34 @@ namespace TelegramBot.NyaBot
                     }
                 }
 
-                System.Threading.Thread.Sleep(1000);
+                await Task.Delay(1000);
             }
         }
 
-        private Update[] GetUpdates()
+        private Task<ICollection<Update>> GetUpdates()
         {
             try
             {
-                var request = new UpdatesRequest
-                {
-                    Offset = _updateOffset
-                };
-
-                var jsonText = _api.SendRequest("getUpdates", request);
-                var response = JsonConvert.DeserializeObject<Response>(jsonText);
-                if (response.Success)
-                {
-                    return response.Updates;
-                }
-                else
-                {
-                    return new Update[0];
-                }
+                return _updatesProvider.GetUpdates();
             }
             catch (Exception ex)
             {
-                _isRun = false;
+                IsRunning = false;
                 if (ex is WebException || ex is JsonException)
                 {
                     Logger.LogFatal(ex);
-                    return new Update[0];
+                    return Task.FromResult((ICollection<Update>)new Update[]{});
                 }
                 throw;
             }
         }
+
 
         private string EscapeSpecialCharacters(string text)
         {
             var result = text.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
             return result;
         }
-
-		internal event TelegramMessageHandler OnMessage;
 
         internal event InlineQueryHandler OnInlineQuery;
 

@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using TelegramBot.API.Models;
 
 namespace TelegramBot
 {
@@ -113,9 +114,9 @@ namespace TelegramBot
         /// </summary>
         /// <returns>Клавиатура.</returns>
         /// <param name="buttonRows">Ряды из кнопок.</param>
-        internal static API_Classes.KeyboardButton[][] BuildKeyboard(params API_Classes.KeyboardButton[][] buttonRows)
+        internal static KeyboardButton[][] BuildKeyboard(params KeyboardButton[][] buttonRows)
         {
-            var result = new API_Classes.KeyboardButton[buttonRows.Length][];
+            var result = new KeyboardButton[buttonRows.Length][];
             for (int i = 0; i < buttonRows.Length; i++)
             {
                 result[i] = buttonRows[i];
@@ -129,13 +130,13 @@ namespace TelegramBot
         /// </summary>
         /// <returns>Кнопки для клавиатуры.</returns>
         /// <param name="captions">Заголовки кнопок.</param>
-        internal static API_Classes.KeyboardButton[] BuildButtonsRow(params string[] captions)
+        internal static KeyboardButton[] BuildButtonsRow(params string[] captions)
         {
-            var result = new API_Classes.KeyboardButton[captions.Length];
+            var result = new KeyboardButton[captions.Length];
 
             for (int i = 0; i < captions.Length; i++)
             {
-                result[i] = new API_Classes.KeyboardButton
+                result[i] = new KeyboardButton
                 {
                     Text = captions[i]
                 };

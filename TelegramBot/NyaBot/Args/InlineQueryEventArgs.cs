@@ -1,4 +1,4 @@
-﻿using TelegramBot.API_Classes.Inline_mode;
+﻿using TelegramBot.API.Models.Inline_mode;
 
 namespace TelegramBot.NyaBot.Args
 {

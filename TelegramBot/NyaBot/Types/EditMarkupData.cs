@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using TelegramBot.API_Classes;
+using TelegramBot.API.Models;
 
 namespace TelegramBot.NyaBot.Types
 {

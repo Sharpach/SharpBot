@@ -1,9 +1,9 @@
 ﻿using System;
-using TelegramBot.API_Classes;
+using TelegramBot.API.Models;
 
 namespace TelegramBot.NyaBot.Args
 {
-    internal class TelegramMessageEventArgs : EventArgs
+    public class TelegramMessageEventArgs : EventArgs
     {
         public long ChatId { get; set; }
         public int MessageId { get; set; }

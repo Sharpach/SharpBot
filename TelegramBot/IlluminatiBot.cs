@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Net;
-using TelegramBot.API_Classes;
 using System.Threading;
+using TelegramBot.API.Models;
 
 namespace TelegramBot
 {

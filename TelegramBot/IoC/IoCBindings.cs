@@ -5,7 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Ninject.Modules;
+using TelegramBot.API;
 using TelegramBot.NyaBot;
+using TelegramBot.NyaBot.Commands;
+using TelegramBot.NyaBot.Updates;
 
 namespace TelegramBot.IoC
 {
@@ -14,8 +17,9 @@ namespace TelegramBot.IoC
         public override void Load()
         {
             Bind<NyanBot>().ToSelf();
-            Bind<BotApiClient>().ToConstant(new BotApiClient(ConfigurationManager.AppSettings["token"]));
-
+            Bind<ApiClient>().ToConstant(new ApiClient(ConfigurationManager.AppSettings["token"]));
+            Bind<ICommandInvoker>().To<CommandInvoker>();
+            Bind<IUpdatesProvider>().To<UpdatesProvider>();
         }
     }
 }

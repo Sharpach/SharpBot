@@ -1,5 +1,5 @@
 ﻿using System;
-using TelegramBot.API_Classes;
+using TelegramBot.API.Models;
 
 namespace TelegramBot.NyaBot.Args
 {
