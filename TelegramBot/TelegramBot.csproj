@@ -100,12 +100,20 @@
     <Compile Include="API\Models\Voice.cs" />
     <Compile Include="Bot\Commands\Impl\AnekdotCommand.cs" />
     <Compile Include="Bot\Commands\Impl\GifCommand.cs" />
+    <Compile Include="Bot\Commands\Impl\QuizCommand.cs" />
+    <Compile Include="Bot\Commands\Impl\UptimeCommand.cs" />
     <Compile Include="Bot\Commands\Impl\WolframCommand.cs" />
     <Compile Include="Bot\Commands\Impl\RollCommand.cs" />
+    <Compile Include="Bot\Commands\StatefulCommand.cs" />
     <Compile Include="Bot\IBot.cs" />
     <Compile Include="Bot\Replies\ButtonsReply.cs" />
     <Compile Include="Bot\Replies\DocumentReply.cs" />
     <Compile Include="Bot\Replies\VideoReply.cs" />
+    <Compile Include="Bot\Resources\Quiz.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Quiz.resx</DependentUpon>
+    </Compile>
     <Compile Include="IlluminatiBot.cs" />
     <Compile Include="IoC\IoCBindings.cs" />
     <Compile Include="Logging\ConsoleLogger.cs" />
@@ -162,7 +170,14 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Bot\Resources\Quiz.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Quiz.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\questions.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
