@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using TelegramBot.Bot.Args;
 using TelegramBot.Bot.Replies;
 using TelegramBot.Util;
 
-namespace TelegramBot.Bot.Commands.Impl
+namespace TelegramBot.Bot.Commands
 {
     class QuizCommand : StatefulCommand
     {

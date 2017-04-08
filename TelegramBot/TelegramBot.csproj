@@ -101,6 +101,7 @@
     <Compile Include="Bot\Commands\Impl\AnekdotCommand.cs" />
     <Compile Include="Bot\Commands\Impl\GifCommand.cs" />
     <Compile Include="Bot\Commands\Impl\QuizCommand.cs" />
+    <Compile Include="Bot\Commands\Impl\SosachCommand.cs" />
     <Compile Include="Bot\Commands\Impl\UptimeCommand.cs" />
     <Compile Include="Bot\Commands\Impl\WolframCommand.cs" />
     <Compile Include="Bot\Commands\Impl\RollCommand.cs" />
