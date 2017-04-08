@@ -161,6 +161,9 @@
     <Compile Include="Bot\Types\ChatActionToSend.cs" />
     <Compile Include="API\Models\ApiResponse.cs" />
     <Compile Include="Util\EnumerableExtensions.cs" />
+    <Compile Include="Util\EqualityComparerFactory.cs" />
+    <Compile Include="Util\RecordsTable.cs" />
+    <Compile Include="Util\StringExtensions.cs" />
     <Compile Include="Util\ThrottleFilter.cs" />
     <Compile Include="Util\IThrottleFilter.cs" />
     <Compile Include="Util\NewtonsoftJsonSerializer.cs" />

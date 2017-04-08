@@ -50,6 +50,8 @@ namespace TelegramBot.Bot.Commands.Impl
         {
             private QuizCommand _command;
 
+            private RecordsTable _records = new RecordsTable();
+
             public GameState(QuizCommand command)
             {
                 _command = command;
@@ -67,6 +69,8 @@ namespace TelegramBot.Bot.Commands.Impl
             {
                 return true;
             }
+
+            private const int PointsPerCorrectAnswer = 5;
 
             public Task<IEnumerable<IReply>> Invoke(TelegramMessageEventArgs input)
             {
@@ -88,13 +92,38 @@ namespace TelegramBot.Bot.Commands.Impl
 
                 }
 
+                if (MessageEquals(input, "счет", "счёт", "score"))
+                {
+                    int score = _records.GetPoints(input.From);
+                   return Task.FromResult((IEnumerable<IReply>)new IReply[]
+                    {
+                        new TextReply($"Счет игрока {input.From.Username}: {score}"),
+                    });
+                }
+
+                if (MessageEquals(input, "топ"))
+                {
+                    int count = 10;
+
+                    string top = _records.Data.OrderByDescending(t => t.Value)
+                        .Select((t, i) => $"{i+1}. {t.Key.FirstName} {t.Key.LastName} - {t.Value}")
+                        .Take(count)
+                        .StringJoin("\r\n");
+
+                    return Task.FromResult((IEnumerable<IReply>)new IReply[]
+                    {
+                        new TextReply($"Топ-{count} игроков:\r\n\r\n"+top),
+                    });
+                }
+
                 if (MessageEquals(input, _currentQuestion.Answer))
                 {
                     string answer = _currentQuestion.Answer;
                     _currentQuestion = _questions.PickRandom();
+                    _records.AddPoints(input.From, PointsPerCorrectAnswer);
                     return Task.FromResult((IEnumerable<IReply>)new IReply[]
                     {
-                        new TextReply($"Правильно, {input.From.Username}! Это {answer}"),
+                        new TextReply($"Правильно, {input.From.FirstName} ты получаешь {PointsPerCorrectAnswer} очков! Это {answer}"),
                         new TextReply($"Следующий вопрос: {_currentQuestion.Text}")
                     });
                 }
