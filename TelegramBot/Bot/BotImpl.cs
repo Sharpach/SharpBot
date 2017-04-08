@@ -32,7 +32,7 @@ namespace TelegramBot.Bot
         public async Task Start()
         {
             IsRunning = true;
-            await UpdatesThread();
+            await UpdateRoutine();
         }
 
         public void Stop()
@@ -42,7 +42,7 @@ namespace TelegramBot.Bot
 
         public bool IsRunning { get; private set; }
 
-        private async Task UpdatesThread()
+        private async Task UpdateRoutine()
         {
             Logger?.Log(LogLevel.Message, "Бот запущен.");
             while (IsRunning)

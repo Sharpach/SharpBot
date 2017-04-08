@@ -8,24 +8,27 @@ using TelegramBot.Util;
 
 namespace TelegramBot.Bot.Commands
 {
-    class MeCommand : RequestCommand<User>
+    class MeCommand : BaseCommand 
     {
-        public override string Method => "getme";
+        private readonly ApiClient _client;
 
         public override bool ShouldInvoke(TelegramMessageEventArgs input)
         {
-            return StringEquals(input.Message.Text, "getme");
+            return MessageEquals(input, "getme");
         }
 
         public override async Task<IEnumerable<IReply>> Invoke(TelegramMessageEventArgs input)
         {
-            var user = await Get();
+            var user = await TryGet<User>(_client, "getme");
+            if (user?.Username == null) return Nothing;
+
             return new TextReply($"Привет, меня зовут {user.Username}").Yield();
         }
 
 
-        public MeCommand(ApiClient client) : base(client)
+        public MeCommand(ApiClient client)
         {
+            _client = client;
         }
     }
 }

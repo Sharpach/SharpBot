@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Ninject;
+using Ninject.Syntax;
 using TelegramBot.API;
 using TelegramBot.Bot.Args;
 using TelegramBot.Bot.Replies;
@@ -12,18 +13,12 @@ namespace TelegramBot.Bot.Commands
 {
     class CommandInvoker : ICommandInvoker
     {
-        private readonly ApiClient _client;
+        public ICollection<BaseCommand> Commands { get; }
 
-        public CommandInvoker(ApiClient client, IKernel kernel)
+        public CommandInvoker(IResolutionRoot kernel)
         {
-            _client = client;
-            Me = new MeCommand(_client);
             Commands = GetCommands(kernel).ToList();
         }
-
-        public ICollection<BaseCommand> Commands { get; } 
-
-        public readonly MeCommand Me;
 
         public async Task<IEnumerable<IReply>> Invoke(TelegramMessageEventArgs input)
         {
@@ -37,7 +32,7 @@ namespace TelegramBot.Bot.Commands
             return result;
         }
 
-        private IEnumerable<BaseCommand> GetCommands(IKernel kernel)
+        private static IEnumerable<BaseCommand> GetCommands(IResolutionRoot kernel)
         {
             var types = Assembly.GetExecutingAssembly()
                 .GetTypes()

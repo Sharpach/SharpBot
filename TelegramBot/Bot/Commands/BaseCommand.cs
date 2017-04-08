@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TelegramBot.API;
+using TelegramBot.API.Models;
 using TelegramBot.Bot.Args;
 using TelegramBot.Bot.Replies;
 using TelegramBot.Util;
@@ -21,20 +23,25 @@ namespace TelegramBot.Bot.Commands
 
         protected bool MessageEquals(TelegramMessageEventArgs args, params string[] values)
         {
-            if (args?.Message?.Text == null) return false;
-            return StringOneOf(args?.Message?.Text, values);
+            return StringEqualsToOneOf(args?.Message?.Text, values);
         }
 
-        protected bool StringOneOf(string x, IEnumerable<string> ys)
+        private bool StringEqualsToOneOf(string x, IEnumerable<string> ys)
         {
             return ys.Any(y => StringEquals(x, y));
         }
 
-        protected IEnumerable<IReply> Nothing => Enumerable.Empty<IReply>();
+        protected static IEnumerable<IReply> Nothing => Enumerable.Empty<IReply>();
 
         protected static Task<IEnumerable<IReply>> FromResult(IReply reply)
         {
             return Task.FromResult(reply.Yield());
+        }
+
+        protected async Task<T> TryGet<T>(ApiClient client, string endpoint, object args = null) where T : class
+        {
+            var response = await client.SendRequestAsync<ApiResponse<T>>(endpoint, args);
+            return response.Ok ? response.ResultObject : null;
         }
 
 

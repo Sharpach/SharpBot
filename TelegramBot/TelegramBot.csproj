@@ -108,7 +108,6 @@
     <Compile Include="Bot\Commands\Impl\SendMessageCommand.cs" />
     <Compile Include="Bot\Commands\Impl\TestCommand.cs" />
     <Compile Include="Bot\Commands\Impl\UpdatesCommand.cs" />
-    <Compile Include="Bot\Commands\RequestCommand.cs" />
     <Compile Include="Bot\Replies\ImageReply.cs" />
     <Compile Include="Bot\Replies\IReply.cs" />
     <Compile Include="Bot\Replies\IReplySender.cs" />

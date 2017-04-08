@@ -47,8 +47,9 @@ namespace TelegramBot.API
 
         private async Task<TResult> Post<TResult>(RestRequest request)
         {
-            var result = await _client.ExecutePostTaskAsync(request);
-            return JsonConvert.DeserializeObject<TResult>(result.Content);
+            var response = await _client.ExecutePostTaskAsync(request);
+            var result = JsonConvert.DeserializeObject<TResult>(response.Content);
+            return result;
         }
     }
 }
