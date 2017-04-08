@@ -19,7 +19,7 @@ namespace TelegramBot.API
         {
             _client = new RestClient(BaseApiAddress + token);
         }
-        
+
         public Task<TResult> SendRequestAsync<TResult>(string method, object obj = null)
         {
             var request = new RestRequest(method, Method.POST) {RequestFormat = DataFormat.Json};
@@ -32,7 +32,7 @@ namespace TelegramBot.API
             return Post<TResult>(request);
         }
 
-        public Task<TResult> SendFile<TResult>(string method, long chatId, byte[] bytes)
+        public Task<TResult> SendPhoto<TResult>(string method, long chatId, byte[] bytes)
         {
             RestRequest restRequest = new RestRequest(method)
             {
@@ -45,7 +45,7 @@ namespace TelegramBot.API
             return Post<TResult>(restRequest);
         }
 
-        private async Task<TResult> Post<TResult>(RestRequest request)
+        private async Task<TResult> Post<TResult>(IRestRequest request)
         {
             var response = await _client.ExecutePostTaskAsync(request);
             var result = JsonConvert.DeserializeObject<TResult>(response.Content);
