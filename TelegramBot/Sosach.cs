@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Text;
 using Newtonsoft.Json;
+using Ninject;
+using TelegramBot.Logging;
 
 namespace TelegramBot
 {
     public class Sosach
     {
+        [Inject]
+        public ILogger Logger { get; set; }
+
         public string GetThreadsList(string boardName = "b")
         {
             string url = $"https://2ch.hk/{boardName}/catalog.json";
@@ -35,7 +40,7 @@ namespace TelegramBot
                 }
                 catch (Exception e)
                 {
-                    Logger.LogError(e);
+                    Logger.Log(LogLevel.Error, e);
                 }
             }
 
