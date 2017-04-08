@@ -32,9 +32,9 @@ namespace TelegramBot.API
             return Post<TResult>(request);
         }
 
-        public Task<TResult> SendPhoto<TResult>(string method, long chatId, byte[] bytes)
+        public Task<TResult> SendPhoto<TResult>(long chatId, byte[] bytes)
         {
-            RestRequest restRequest = new RestRequest(method)
+            RestRequest restRequest = new RestRequest("sendPhoto")
             {
                 RequestFormat = DataFormat.Json,
                 Method = Method.POST
@@ -44,6 +44,33 @@ namespace TelegramBot.API
             restRequest.AddFile("photo", bytes, "file");
             return Post<TResult>(restRequest);
         }
+
+        public Task<TResult> SendDocument<TResult>(long chatId, byte[] bytes)
+        {
+            RestRequest restRequest = new RestRequest("sendDocument")
+            {
+                RequestFormat = DataFormat.Json,
+                Method = Method.POST
+            };
+            restRequest.AddHeader("Content-Type", "multipart/form-data");
+            restRequest.AddParameter("chat_id", chatId);
+            restRequest.AddFile("document", bytes, "file");
+            return Post<TResult>(restRequest);
+        }
+
+        public Task<TResult> SendVideo<TResult>(long chatId, byte[] bytes)
+        {
+            RestRequest restRequest = new RestRequest("sendVideo")
+            {
+                RequestFormat = DataFormat.Json,
+                Method = Method.POST
+            };
+            restRequest.AddHeader("Content-Type", "multipart/form-data");
+            restRequest.AddParameter("chat_id", chatId);
+            restRequest.AddFile("video", bytes, "file");
+            return Post<TResult>(restRequest);
+        }
+
 
         private async Task<TResult> Post<TResult>(IRestRequest request)
         {

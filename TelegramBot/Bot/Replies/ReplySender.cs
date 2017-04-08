@@ -33,7 +33,7 @@ namespace TelegramBot.Bot.Replies
 
         public async Task VisitImage(ImageReply reply, long chatId)
         {
-            await _client.SendPhoto<object>("sendPhoto", chatId, reply.Image);
+            await _client.SendPhoto<object>(chatId, reply.Image);
                 
         }
 
@@ -48,6 +48,16 @@ namespace TelegramBot.Bot.Replies
                 ReplayToMessageId = 0,
                 ReplyMarkup = reply.Markup
             });
+        }
+
+        public async Task VisitDocument(DocumentReply reply, long chatId)
+        {
+            await _client.SendDocument<object>(chatId, reply.Document);
+        }
+
+        public async Task VisitVideo(VideoReply reply, long chatId)
+        {
+            await _client.SendVideo<object>(chatId, reply.Video);
         }
     }
 }
