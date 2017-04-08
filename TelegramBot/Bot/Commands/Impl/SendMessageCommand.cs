@@ -8,7 +8,7 @@ using TelegramBot.Bot.Types;
 
 namespace TelegramBot.Bot.Commands
 {
-    class SendMessageCommand : BaseCommand
+    class SendMessageCommand : Command
     {
         private readonly ApiClient _client;
         private readonly MessageToSend _message;
@@ -24,7 +24,7 @@ namespace TelegramBot.Bot.Commands
             return false;
         }
 
-        public override async Task<IEnumerable<IReply>> Invoke(TelegramMessageEventArgs input)
+        protected override async Task<IEnumerable<IReply>> OnInvoke(TelegramMessageEventArgs input)
         {
             await _client.SendRequestAsync<object>("sendMessage", _message);
             return Nothing;

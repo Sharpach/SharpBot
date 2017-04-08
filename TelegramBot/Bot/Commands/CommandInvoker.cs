@@ -13,7 +13,7 @@ namespace TelegramBot.Bot.Commands
 {
     class CommandInvoker : ICommandInvoker
     {
-        public ICollection<BaseCommand> Commands { get; }
+        public ICollection<Command> Commands { get; }
 
         public CommandInvoker(IResolutionRoot kernel)
         {
@@ -32,14 +32,14 @@ namespace TelegramBot.Bot.Commands
             return result;
         }
 
-        private static IEnumerable<BaseCommand> GetCommands(IResolutionRoot kernel)
+        private static IEnumerable<Command> GetCommands(IResolutionRoot kernel)
         {
             var types = Assembly.GetExecutingAssembly()
                 .GetTypes()
-                .Where(t => typeof(BaseCommand).IsAssignableFrom(t) && !t.IsAbstract);
+                .Where(t => typeof(Command).IsAssignableFrom(t) && !t.IsAbstract);
             foreach (var commandType in types)
             {
-                yield return (BaseCommand)kernel.Get(commandType);
+                yield return (Command)kernel.Get(commandType);
             }
         }
     }

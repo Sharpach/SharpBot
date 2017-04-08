@@ -1,25 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Ninject;
 using TelegramBot.Bot.Args;
 using TelegramBot.Bot.Replies;
 using TelegramBot.Logging;
+using TelegramBot.Util;
 
 namespace TelegramBot.Bot.Commands
 {
-    class CatCommand : BaseCommand
+    class CatCommand : Command
     {
         [Inject]
         public ILogger Logger { get; set; }
 
         public override bool ShouldInvoke(TelegramMessageEventArgs input)
         {
+            OneRequestPer(TimeSpan.FromSeconds(10));
             return input?.Message?.Text?.ToUpper().Contains("КОТ") ?? false;
         }
 
-        public override async Task<IEnumerable<IReply>> Invoke(TelegramMessageEventArgs input)
+        protected override async Task<IEnumerable<IReply>> OnInvoke(TelegramMessageEventArgs input)
         {
             byte[] image;
             try
@@ -31,12 +34,10 @@ namespace TelegramBot.Bot.Commands
                 Logger.Log(ex);
                 return Nothing;
             }
-            
-            await Task.Delay(500); //Limit Cat API requests per second
 
             return new IReply[]
             {
-                new TextReply("Кто-то сказал " + input.Message.Text.Replace("кот", "КОТ") + "???"),
+                new TextReply("Кто-то сказал " + Regex.Replace(input.Message.Text, "кот", "КОТ", RegexOptions.IgnoreCase) + "???"),
                 new ImageReply(image)
             };
         }
@@ -47,6 +48,11 @@ namespace TelegramBot.Bot.Commands
             {
                 return client.DownloadDataTaskAsync("http://thecatapi.com/api/images/get");
             }
+        }
+
+        protected override string GetOverThrottleText(TimeSpan remainingTime)
+        {
+            return "Прости, следующий котик будет только через " + remainingTime.ToHmsString();
         }
     }
 }

@@ -12,6 +12,7 @@ using TelegramBot.Bot.Commands;
 using TelegramBot.Bot.Replies;
 using TelegramBot.Bot.Updates;
 using TelegramBot.Logging;
+using TelegramBot.Util;
 
 namespace TelegramBot.IoC
 {
@@ -26,6 +27,7 @@ namespace TelegramBot.IoC
             Bind<IReplySender>().To<ReplySender>();
             Bind<ILogger>().To<ConsoleLogger>();
             Bind<IBot>().To<BotImpl>();
+            Bind<IThrottleFilter>().To<ThrottleFilter>();
             //Bind<IKernel>().ToConstant(Kernel);
         }
     }

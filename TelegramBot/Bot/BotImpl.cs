@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Ninject;
 using TelegramBot.API;
@@ -45,6 +46,8 @@ namespace TelegramBot.Bot
         private async Task UpdateRoutine()
         {
             Logger?.Log(LogLevel.Message, "Бот запущен.");
+            await SkipUpdatesToEnd();
+
             while (IsRunning)
             {
                 await Task.Delay(1000);
@@ -67,6 +70,15 @@ namespace TelegramBot.Bot
                 }
               
             }
+        }
+
+        private async Task SkipUpdatesToEnd()
+        {
+            ICollection<Update> updates;
+            do
+            {
+                updates = await _updatesProvider.GetUpdates();
+            } while (updates.Count > 0);
         }
 
         private async Task ProcessMessage(Message message)

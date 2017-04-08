@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Ninject;
 using TelegramBot.API;
 using TelegramBot.API.Models;
 using TelegramBot.Bot.Args;
@@ -10,11 +11,27 @@ using TelegramBot.Util;
 
 namespace TelegramBot.Bot.Commands
 {
-    abstract class BaseCommand
+    abstract class Command
     {
+        [Inject]
+        public IThrottleFilter ThrottleFilter { get; set; }
+
         public abstract bool ShouldInvoke(TelegramMessageEventArgs input);
 
-        public abstract Task<IEnumerable<IReply>> Invoke(TelegramMessageEventArgs input);
+        public async Task<IEnumerable<IReply>> Invoke(TelegramMessageEventArgs input)
+        {
+            if (ThrottleFilter != null && !ThrottleFilter.CanExecute())
+            {
+                TimeSpan remainingTime = ThrottleFilter.Frequency.Value - (DateTime.Now - ThrottleFilter.LastExecution);
+                return new TextReply(GetOverThrottleText(remainingTime)).Yield();
+            }
+
+            IEnumerable<IReply> result = await OnInvoke(input);
+            ThrottleFilter?.Executed();
+            return result;
+        }
+
+        protected abstract Task<IEnumerable<IReply>> OnInvoke(TelegramMessageEventArgs input);
 
         protected bool StringEquals(string x, string y)
         {
@@ -44,6 +61,17 @@ namespace TelegramBot.Bot.Commands
             return response.Ok ? response.ResultObject : null;
         }
 
+        protected void OneRequestPer(TimeSpan frequency)
+        {
+            if (ThrottleFilter != null)
+            {
+                ThrottleFilter.Frequency = frequency;
+            }
+        }
 
+        protected virtual string GetOverThrottleText(TimeSpan remainingTime)
+        {
+            return "ѕрости, но это можно будет сделать только через " + remainingTime.ToHmsString();
+        }
     }
 }

@@ -7,7 +7,7 @@ using TelegramBot.Util;
 
 namespace TelegramBot.Bot.Commands
 {
-    class RollCommand : BaseCommand
+    class RollCommand : Command
     {
         private static Random _random = new Random();
         
@@ -16,7 +16,7 @@ namespace TelegramBot.Bot.Commands
             return MessageEquals(input, "ролл", "roll", "/roll");
         }
 
-        public override Task<IEnumerable<IReply>> Invoke(TelegramMessageEventArgs input)
+        protected override Task<IEnumerable<IReply>> OnInvoke(TelegramMessageEventArgs input)
         {
             return FromResult(new TextReply(_random.Next(0, 101).ToString()));
         }
