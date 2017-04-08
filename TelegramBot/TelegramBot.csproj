@@ -105,6 +105,7 @@
     <Compile Include="Bot\Commands\Impl\UptimeCommand.cs" />
     <Compile Include="Bot\Commands\Impl\WolframCommand.cs" />
     <Compile Include="Bot\Commands\Impl\RollCommand.cs" />
+    <Compile Include="Bot\Commands\Impl\XkcdCommand.cs" />
     <Compile Include="Bot\Commands\StatefulCommand.cs" />
     <Compile Include="Bot\IBot.cs" />
     <Compile Include="Bot\Replies\ButtonsReply.cs" />

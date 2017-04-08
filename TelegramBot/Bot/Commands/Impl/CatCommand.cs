@@ -18,7 +18,7 @@ namespace TelegramBot.Bot.Commands
 
         public override bool ShouldInvoke(TelegramMessageEventArgs input)
         {
-            OneRequestPer(TimeSpan.FromSeconds(10));
+            OneRequestPer(TimeSpan.FromSeconds(5));
             return input?.Message?.Text?.ToUpper().Contains("КОТ") ?? false;
         }
 
@@ -37,8 +37,7 @@ namespace TelegramBot.Bot.Commands
 
             return new IReply[]
             {
-                new TextReply("Кто-то сказал " + Regex.Replace(input.Message.Text, "кот", "КОТ", RegexOptions.IgnoreCase) + "???"),
-                new ImageReply(image)
+                new ImageReply(image, "Кто-то сказал " + FindCatWord(input.Message.Text) + "???")
             };
         }
 
@@ -48,6 +47,20 @@ namespace TelegramBot.Bot.Commands
             {
                 return client.DownloadDataTaskAsync("http://thecatapi.com/api/images/get");
             }
+        }
+
+        private string FindCatWord(string input)
+        {
+            string[] words = input.Split(' ', ',', ':', ';', '(', ')', '[', ']');
+            foreach (var word in words)
+            {
+                if (word.ToUpper().Contains("КОТ"))
+                {
+                    return Regex.Replace(word, "кот", "КОТ", RegexOptions.IgnoreCase);
+                }
+            }
+
+            return null;
         }
 
         protected override string GetOverThrottleText(TimeSpan remainingTime)

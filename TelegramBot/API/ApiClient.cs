@@ -32,7 +32,7 @@ namespace TelegramBot.API
             return Post<TResult>(request);
         }
 
-        public Task<TResult> SendPhoto<TResult>(long chatId, byte[] bytes)
+        public Task<TResult> SendPhoto<TResult>(long chatId, byte[] bytes, string caption = null)
         {
             RestRequest restRequest = new RestRequest("sendPhoto")
             {
@@ -41,6 +41,10 @@ namespace TelegramBot.API
             };
             restRequest.AddHeader("Content-Type", "multipart/form-data");
             restRequest.AddParameter("chat_id", chatId);
+            if (caption != null)
+            {
+                restRequest.AddParameter("caption", caption);
+            }
             restRequest.AddFile("photo", bytes, "file");
             return Post<TResult>(restRequest);
         }

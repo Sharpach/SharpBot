@@ -33,7 +33,7 @@ namespace TelegramBot.Bot.Replies
 
         public async Task VisitImage(ImageReply reply, long chatId)
         {
-            await _client.SendPhoto<object>(chatId, reply.Image);
+            await _client.SendPhoto<object>(chatId, reply.Image, reply.Caption);
                 
         }
 
