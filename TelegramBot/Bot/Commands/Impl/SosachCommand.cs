@@ -1,17 +1,23 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Ninject;
+using TelegramBot.Bot.Args;
+using TelegramBot.Bot.Replies;
 using TelegramBot.Logging;
+using TelegramBot.Util;
 
-namespace TelegramBot
+namespace TelegramBot.Bot.Commands
 {
-    public class Sosach
+    class SosachCommand : Command
     {
         [Inject]
         public ILogger Logger { get; set; }
 
-        public string GetThreadsList(string boardName = "b")
+        private async Task<string> GetThreadsList(string boardName = "b")
         {
             string url = $"https://2ch.hk/{boardName}/catalog.json";
             var result = String.Empty;
@@ -21,9 +27,9 @@ namespace TelegramBot
                 try
                 {
                     client.Encoding = Encoding.UTF8;
-                    var jsonText = client.DownloadString(url);
+                    var jsonText = await client.DownloadStringTaskAsync(url);
 
-                    var board = JsonConvert.DeserializeObject<SosachBoard>(jsonText);
+                    var board = JsonConvert.DeserializeObject<TelegramBot.SosachBoard>(jsonText);
 
                     var builder = new StringBuilder();
                     builder.AppendLine("Доска: " + board.BoardName + Environment.NewLine);
@@ -32,7 +38,9 @@ namespace TelegramBot
                     {
                         var thread = board.Threads[i];
 
-                        builder.AppendLine("Тема: " + ((thread.Comment.Length < 300) ? thread.Comment : thread.Subject));
+                        builder.AppendLine("Тема: " + ((thread.Comment.Length < 300)
+                                               ? thread.Comment
+                                               : thread.Subject));
                         builder.AppendLine("Количество постов: " + board.Threads[i].PostsCount + Environment.NewLine);
                     }
 
@@ -64,6 +72,31 @@ namespace TelegramBot
 
             return true;
         }
+
+        public override bool ShouldInvoke(TelegramMessageEventArgs input)
+        {
+            string prefix = "харкач";
+            return MessageEquals(input, prefix) || Regex.IsMatch(input.Message.Text, prefix + @" +\/.", RegexOptions.IgnoreCase);
+        }
+
+        protected override async Task<IEnumerable<IReply>> OnInvoke(TelegramMessageEventArgs input)
+        {
+            string board = GetBoard(input.Message.Text);
+            string output = await GetThreadsList(board);
+            return new TextReply(output).Yield();
+        }
+
+        private string GetBoard(string message)
+        {
+            var match = Regex.Match(message, @"\/(.+)");
+            if (match.Success && match.Groups.Count >=1)
+            {
+                var group = match.Groups[1];
+                return group.Value;
+            }
+
+            return "b";
+        }
     }
 
     internal class SosachBoard
@@ -72,7 +105,7 @@ namespace TelegramBot
         public string BoardName { get; set; }
 
         [JsonProperty("threads")]
-        public SosachThread[] Threads { get; set; }
+        public TelegramBot.SosachThread[] Threads { get; set; }
     }
 
     internal class SosachThread
