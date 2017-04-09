@@ -3,22 +3,26 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using TelegramBot.Bot.Args;
 using TelegramBot.Bot.Replies;
-using TelegramBot.Util;
 
 namespace TelegramBot.Bot.Commands
 {
-    class RollCommand : Command
+    class UptimeCommand : Command
     {
-        private static Random _random = new Random();
-        
+        private DateTime StartDateTime { get; }
+        public UptimeCommand()
+        {
+            StartDateTime = DateTime.Now;
+        }
+
         public override bool ShouldInvoke(TelegramMessageEventArgs input)
         {
-            return MessageEquals(input, "ролл", "roll", "/roll");
+            return MessageEquals(input, "аптайм", "uptime", "/uptime");
         }
 
         protected override Task<IEnumerable<IReply>> OnInvoke(TelegramMessageEventArgs input)
         {
-            return FromResult(new TextReply(_random.Next(0, 101).ToString()));
+            TimeSpan diff = DateTime.Now - StartDateTime;
+            return FromResult(new TextReply(diff.ToString(@"hh\:mm\:ss")));
         }
     }
 }

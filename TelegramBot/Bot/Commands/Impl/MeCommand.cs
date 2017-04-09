@@ -8,7 +8,7 @@ using TelegramBot.Util;
 
 namespace TelegramBot.Bot.Commands
 {
-    class MeCommand : BaseCommand 
+    class MeCommand : Command 
     {
         private readonly ApiClient _client;
 
@@ -17,7 +17,7 @@ namespace TelegramBot.Bot.Commands
             return MessageEquals(input, "getme");
         }
 
-        public override async Task<IEnumerable<IReply>> Invoke(TelegramMessageEventArgs input)
+        protected override async Task<IEnumerable<IReply>> OnInvoke(TelegramMessageEventArgs input)
         {
             var user = await TryGet<User>(_client, "getme");
             if (user?.Username == null) return Nothing;

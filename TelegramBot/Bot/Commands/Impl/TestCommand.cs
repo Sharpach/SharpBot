@@ -6,14 +6,14 @@ using TelegramBot.Bot.Replies;
 
 namespace TelegramBot.Bot.Commands
 {
-    class TestCommand : BaseCommand
+    class TestCommand : Command
     {
         public override bool ShouldInvoke(TelegramMessageEventArgs input)
         {
             return input.Message?.Text?.EndsWith("ест") ?? false;
         }
 
-        public override Task<IEnumerable<IReply>> Invoke(TelegramMessageEventArgs input)
+        protected override Task<IEnumerable<IReply>> OnInvoke(TelegramMessageEventArgs input)
         {
             return Task.FromResult(GetReplies(input));
         }
